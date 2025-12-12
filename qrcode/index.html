@@ -1,0 +1,173 @@
+<html>
+<head>
+    <script src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"></script>
+    <meta name="viewport" content="width=device-width">
+    <title>Exam Admit Card</title>
+    <style>
+        /* [ ... ALL YOUR EXISTING CSS STYLES HERE ... ] */
+        body { font-family: Arial, sans-serif; text-align: center; margin: 20px; }
+        .content { width: 90%; margin: 0 auto; position: relative; }
+        .instructions { width: 90%; text-align: left; margin: 10px auto; line-height: 1.5; font-size: 10px; }
+        img#avatar { width: 60px; height: auto; position: absolute; top: 10px; right: 10px; padding: 2px; background: white; box-shadow: 0 0 5px rgba(0,0,0,0.1); }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        h2, h3 { text-align: center; }
+        h4, h5 { text-align: left; }
+        .noprint { display: none; }
+        @media print { .noprint { display: none; } }
+    </style>
+</head>
+<body>
+
+    <div class="content">
+        <img id="avatar" src="" alt="Student Photo">
+        
+        <h2>Pak-Austria Fachhochschule Institute of Applied Sciences and Technology</h2>
+        <h3>EXAM ADMIT CARD <br> End Semester Exam Fall-2025 (FALL-2025)</h3>
+        <hr><br>
+        
+        <table>
+            <tbody>
+                <tr>
+                    <td width="50%"><b>NAME:</b> <span id="student-name"></span></td>
+                    <td width="25%"><b>REG NO:</b> <span id="student-regno"></span></td>
+                    <td width="25%"><b>SEMESTER:</b> <span id="student-semester"></span></td>
+                </tr>
+                <tr>
+                    <td colspan="2"><b>PROGRAM:</b> <span id="student-program"></span></td>
+                    <td><b>FEE STATUS:</b> <strong id="fee-status" style="color:green"></strong></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h5>The Schedule of examination is given as follows:</h5>
+        
+        <table id="schedule-table">
+            <thead>
+                <tr>
+                    <th width="05%">S#</th>
+                    <th width="10%">DATE</th>
+                    <th width="45%">PAPER</th>
+                    <th width="10%">VENUE</th>
+                    <th width="10%">TIME</th>
+                    <th width="20%">STATUS</th>
+                </tr>
+            </thead>
+            <tbody>
+                </tbody>
+        </table>
+
+        <div id="qrcode" class="noprint"></div>
+    </div>
+    
+    <div class="instructions">
+        <h4>INSTRUCTIONS:</h4>
+        <ol>
+            <li>Please report to the Examination venue at least 20 minutes before the start of the examination for identity verification.</li>
+            <li>Students will have to produce this exam admit card at the entry point of the exam venue.</li>
+            <li>The total duration of the examination will be already mentioned on the question paper. Any student arriving late will have examination time reduced proportionately.</li>
+            <li>Calculators are allowed in the examination hall. However, sharing of a calculator is strictly prohibited.</li>
+            <li>Possession or use of Cell Phone, Smartwatch, or cheating material is strictly prohibited. Any student caught using unfair means or possessing prohibited devices may lead to disciplinary action.</li>
+            <li>Read instructions on the Answer booklet carefully and follow them.</li>
+        </ol>
+    </div>
+
+    <button id="print-button" class="noprint" onclick="window.print()">Print Admit Card</button>
+
+    <script>
+        // --- START OF ADMIT CARD DATA (Copy from Step 1A) ---
+        const admitCardData = {
+            "B24F0098CS010": {
+                name: "Bilal Awan",
+                regNo: "B24F0098CS010",
+                semester: 3,
+                program: "Bachelor of Science in Computer Science",
+                feeStatus: "FEE CLEARED",
+                photoPath: "bilal-awan.jpg",
+                schedule: [
+                    { date: "12/15/2025", paper: "Data Structures and Algorithms (COMP-201)", venue: "A1-207 (Seat#39)", time: "10:00:00" },
+                    { date: "12/16/2025", paper: "Probability and Statistics (MTH-210)", venue: "A2-207 (Seat#39)", time: "10:00:00" },
+                    { date: "12/17/2025", paper: "Database Systems (COMP-231)", venue: "A1-304.1 (Seat#16)", time: "10:00:00" },
+                    { date: "12/18/2025", paper: "Digital Logic Design", venue: "A2-Multipurpose Hall (Seat#42)", time: "10:00:00" },
+                    { date: "12/23/2025", paper: "Professional Ethics (SS-311)", venue: "B2-211 (Seat#24)", time: "14:00:00" },
+                ]
+            },
+            "B24F1336CS032": {
+                name: "Abdul Raheem",
+                regNo: "B24F1336CS032",
+                semester: 3,
+                program: "Bachelor of Science in Computer Science",
+                feeStatus: "FEE CLEARED",
+                photoPath: "abdul-raheem.jpg",
+                schedule: [
+                    { date: "12/15/2025", paper: "Data Structures and Algorithms (COMP-201)", venue: "A1-304.3 (Seat#24)", time: "10:00:00" },
+                    { date: "12/16/2025", paper: "Probability and Statistics (MTH-210)", venue: "A2-201 (Seat#28)", time: "10:00:00" },
+                    { date: "12/17/2025", paper: "Database Systems (COMP-231)", venue: "A1-206 (Seat#21)", time: "10:00:00" },
+                    { date: "12/23/2025", paper: "Professional Ethics (SS-311)", venue: "B2-211 (Seat#58)", time: "14:00:00" },
+                ]
+            }
+        };
+        // --- END OF ADMIT CARD DATA ---
+
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const params = new URLSearchParams(window.location.search);
+            const regNo = params.get('regno'); // Look for the 'regno' parameter in the URL
+
+            if (!regNo || !admitCardData[regNo]) {
+                document.querySelector('.content').innerHTML = '<h2>Error: Admit Card Not Found.</h2><p>Please check the registration number in the URL.</p>';
+                return;
+            }
+
+            const student = admitCardData[regNo];
+
+            // 1. Populate Personal Details
+            document.getElementById('student-name').textContent = student.name;
+            document.getElementById('student-regno').textContent = student.regNo;
+            document.getElementById('student-semester').textContent = student.semester;
+            document.getElementById('student-program').textContent = student.program;
+            document.getElementById('fee-status').textContent = student.feeStatus;
+            
+            // 2. Set Student Photo (Important: Photo path must be relative to this HTML file)
+            document.getElementById('avatar').src = student.photoPath;
+
+            // 3. Populate Exam Schedule
+            const scheduleBody = document.querySelector('#schedule-table tbody');
+            scheduleBody.innerHTML = ''; // Clear any existing rows
+
+            student.schedule.forEach((exam, index) => {
+                const row = scheduleBody.insertRow();
+                
+                // Status HTML is the same for all, so we hardcode it for simplicity
+                const statusHtml = `
+                    <strong style="color:green">* Attendance Cleared.</strong>
+                    <br>
+                    <strong style="color:green">* Survey Cleared.</strong>
+                    <strong style="color:green">* All Cleared.</strong>
+                `;
+                
+                // Insert cells in the correct order
+                row.insertCell().textContent = index + 1;
+                row.insertCell().textContent = exam.date;
+                row.insertCell().textContent = exam.paper;
+                row.insertCell().innerHTML = `${exam.venue}`; // Venue includes Seat#
+                row.insertCell().textContent = exam.time;
+                row.insertCell().innerHTML = statusHtml; // Insert the status HTML
+            });
+
+            // 4. Generate QR Code
+            // The QR code data can be the student's registration number or the full admit card link
+            const qrData = student.regNo; 
+            new QRCode(document.getElementById("qrcode"), {
+                text: qrData,
+                width: 90,
+                height: 90,
+                colorDark : "#000000",
+                colorLight : "#ffffff",
+                correctLevel : QRCode.CorrectLevel.H
+            });
+        });
+    </script>
+</body>
+</html>
